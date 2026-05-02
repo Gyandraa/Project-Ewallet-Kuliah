@@ -45,7 +45,7 @@ export default function TransferPages() {
     if (!bank) newErrors.bank = "Pilih bank tujuan";
 
     if (saldo === 0 || saldo < getRawNumber(nominal)) {
-      newErrors.nominal = `Saldo anda tidak cukup untuk melakukan transfer, cek kembali saldo anda`;
+      newErrors.nominal = `⚠️ Saldo anda tidak cukup, saldo anda saat ini Rp ${formatRupiah(saldo.toString())}, silahkan kurangi nominal transfer atau lakukan topup terlebih dahulu`;
     }
 
     if (!nominal) {
