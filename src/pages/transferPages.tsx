@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWallet } from "../walletContext/walletContext";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -9,11 +9,20 @@ export default function TransferPages() {
   const [deskripsi, setDeskripsi] = useState("");
   const [nominal, setNominal] = useState("");
   const [bank, setBank] = useState("");
+  const [showButtonConfirm, setShowButtonConfirm] = useState(false);
 
   const [errors, setErrors] = useState<any>({});
 
   const { transfer, saldo } = useWallet();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state) {
+      setRekeningId(location.state.rekening || "");
+      setBank(location.state.bank || "");
+    }
+  }, [location.state]);
 
   const notifyError = () =>
     toast.error("Terjadi kesalahan saat transfer, silahkan coba lagi");
@@ -42,10 +51,9 @@ export default function TransferPages() {
     } else if (getRawRekening(rekeningId).length < 10) {
       newErrors.rekeningId = "Rekening tujuan harus minimal 10 digit";
     }
-    if (!bank) newErrors.bank = "Pilih bank tujuan";
 
-    if (saldo === 0 || saldo < getRawNumber(nominal)) {
-      newErrors.nominal = `⚠️ Saldo anda tidak cukup, saldo anda saat ini Rp ${formatRupiah(saldo.toString())}, silahkan kurangi nominal transfer atau lakukan topup terlebih dahulu`;
+    if (!bank) {
+      newErrors.bank = "Pilih bank tujuan";
     }
 
     if (!nominal) {
@@ -54,6 +62,10 @@ export default function TransferPages() {
       newErrors.nominal = "Minimal transfer 10.000";
     } else if (getRawNumber(nominal) > 5000000) {
       newErrors.nominal = "Maksimal transfer 5.000.000";
+    } else if (getRawNumber(nominal) > saldo) {
+      newErrors.nominal = `⚠️ Saldo anda tidak cukup, saldo anda saat ini Rp ${formatRupiah(
+        saldo.toString(),
+      )}, silahkan kurangi nominal transfer atau lakukan topup terlebih dahulu`;
     }
 
     setErrors(newErrors);
@@ -62,11 +74,15 @@ export default function TransferPages() {
 
   const handleTransfer = () => {
     if (!validate()) return;
+    setShowButtonConfirm(true);
+  };
 
-    const result = transfer(getRawNumber(nominal));
+  const handleConfirmTransfer = () => {
+    const result = transfer(getRawNumber(nominal), rekeningId, bank, deskripsi);
 
     if (!result.success) {
       notifyError();
+      setShowButtonConfirm(false);
       return;
     }
 
@@ -76,6 +92,7 @@ export default function TransferPages() {
     setNominal("");
     setDeskripsi("");
     setBank("");
+    setShowButtonConfirm(false);
 
     setTimeout(() => {
       navigate("/");
@@ -85,11 +102,12 @@ export default function TransferPages() {
   const isFormValid =
     getRawRekening(rekeningId).length >= 10 &&
     bank &&
-    getRawNumber(nominal) >= 10000;
+    getRawNumber(nominal) >= 10000 &&
+    getRawNumber(nominal) <= saldo;
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6">
-      <div className="bg-white w-full max-w-md rounded-3xl  p-8 border border-gray-100">
+      <div className="bg-white w-full max-w-md rounded-3xl p-8 border border-gray-100">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
             Transfer Uang
@@ -108,7 +126,7 @@ export default function TransferPages() {
               type="number"
               value={rekeningId}
               onChange={(e) => setRekeningId(e.target.value)}
-              className="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-200 outline-none placeholder:text-gray-400 shadow-sm"
+              className="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-200 outline-none shadow-sm"
               placeholder="0000 0000 0000"
             />
             {rekeningId && getRawRekening(rekeningId).length < 10 && (
@@ -120,7 +138,7 @@ export default function TransferPages() {
               </div>
             )}
             {errors.rekeningId && (
-              <p className="text-red-500 text-xs mt-2 ml-1 flex items-center italic">
+              <p className="text-red-500 text-xs mt-2 ml-1 italic">
                 {errors.rekeningId}
               </p>
             )}
@@ -130,36 +148,19 @@ export default function TransferPages() {
             <label className="block text-xs font-bold text-black uppercase tracking-wider mb-2 ml-1">
               Bank Penerima
             </label>
-            <div className="relative">
-              <select
-                value={bank}
-                onChange={(e) => setBank(e.target.value)}
-                className="w-full bg-gray-50 border-none appearance-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-200 outline-none shadow-sm cursor-pointer"
-              >
-                <option value="">Pilih Bank</option>
-                <option value="bca">BCA</option>
-                <option value="bri">BRI</option>
-                <option value="bni">BNI</option>
-              </select>
-              <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-400">
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
+            <select
+              value={bank}
+              onChange={(e) => setBank(e.target.value)}
+              className="w-full bg-gray-50 border-none rounded-2xl p-4"
+            >
+              <option value="">Pilih Bank</option>
+              <option value="bca">BCA</option>
+              <option value="bri">BRI</option>
+              <option value="bni">BNI</option>
+            </select>
             {errors.bank && (
               <p className="text-red-500 text-xs mt-2 ml-1 italic">
-                ⚠ {errors.bank}
+                {errors.bank}
               </p>
             )}
           </div>
@@ -168,19 +169,13 @@ export default function TransferPages() {
             <label className="block text-xs font-bold text-black uppercase tracking-wider mb-2 ml-1">
               Nominal Transfer
             </label>
-            <div className="relative group">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-blue-600 transition-colors group-focus-within:text-blue-500">
-                Rp
-              </div>
-              <input
-                type="text"
-                value={nominal}
-                onChange={(e) => setNominal(formatRupiah(e.target.value))}
-                className="w-full pl-12 pr-4 py-4 bg-gray-50 border-none rounded-2xl text-lg font-semibold focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-200 outline-none shadow-sm"
-                placeholder="0"
-              />
-            </div>
-
+            <input
+              type="text"
+              value={nominal}
+              onChange={(e) => setNominal(formatRupiah(e.target.value))}
+              className="w-full p-4 bg-gray-50 rounded-2xl"
+              placeholder="0"
+            />
             {nominal && getRawNumber(nominal) < 10000 && (
               <div className="mt-2 flex items-center gap-1.5 text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100">
                 <span className="text-[10px]">●</span>
@@ -205,45 +200,54 @@ export default function TransferPages() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-black uppercase tracking-wider mb-2 ml-1">
-              Deskripsi{" "}
-              <span className="text-gray-500 font-semibold font-normal">
-                (opsional)
-              </span>
-            </label>
             <textarea
               value={deskripsi}
               onChange={(e) => setDeskripsi(e.target.value)}
-              className="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-200 outline-none shadow-sm resize-none"
-              placeholder="Contoh: Beli mobil porsche"
+              className="w-full p-4 bg-gray-50 rounded-2xl"
+              placeholder="Deskripsi (opsional)"
             />
           </div>
 
           <button
             onClick={handleTransfer}
             disabled={!isFormValid}
-            className={`w-full py-4 mt-4 rounded-2xl text-white font-bold tracking-wide shadow-lg transform transition-all duration-200 active:scale-95 ${
-              isFormValid
-                ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-200"
-                : "bg-gray-300 cursor-not-allowed shadow-none"
+            className={`w-full py-4 mt-4 rounded-2xl text-white font-bold ${
+              isFormValid ? "bg-blue-600" : "bg-gray-300 cursor-not-allowed"
             }`}
           >
             Konfirmasi Transfer
           </button>
         </div>
       </div>
-      <ToastContainer
-        position="bottom-right"
-        autoClose={2500}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
+
+      {showButtonConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-[90%] max-w-sm text-center">
+            <h2 className="text-lg font-bold mb-4">Konfirmasi Transfer</h2>
+
+            <p>Bank: {bank.toUpperCase()}</p>
+            <p>Rekening: {rekeningId}</p>
+            <p className="mb-4">Nominal: Rp {formatRupiah(nominal)}</p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowButtonConfirm(false)}
+                className="flex-1 py-2 bg-gray-200 rounded-xl"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmTransfer}
+                className="flex-1 py-2 bg-blue-600 text-white rounded-xl"
+              >
+                Ya, Kirim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer position="bottom-right" autoClose={2500} />
     </div>
   );
 }
