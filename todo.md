@@ -1,4 +1,4 @@
-✅1. Strive for Consistency (Konsistensi)
+✅ 1. Strive for Consistency (Konsistensi)
 
 👉 Tampilan dan interaksi harus seragam di seluruh aplikasi.
 
@@ -10,7 +10,7 @@ Format angka selalu sama (Rp 10.000, bukan kadang 10000)
 
 ✅ Kenapa penting: user jadi cepat paham tanpa mikir ulang.
 
-2. Enable Frequent Users to Use Shortcuts (Sediakan Shortcut)
+✅ 2. Enable Frequent Users to Use Shortcuts (Sediakan Shortcut)
 
 👉 User yang sering pakai aplikasi harus bisa lebih cepat.
 
@@ -61,7 +61,7 @@ Lebih baik lagi:
 
 Kasih solusi → “Silakan isi saldo terlebih dahulu”
 
-6.  Permit Easy Reversal of Actions (Bisa Dibatalkan)
+✅ 6. Permit Easy Reversal of Actions (Bisa Dibatalkan)
 
 👉 User harus bisa undo / batal.
 
@@ -85,7 +85,7 @@ Tidak ada pop-up yang memaksa
 
 ✅ Jangan bikin user “dipaksa sistem”.
 
-8.  Reduce Short-Term Memory Load (Kurangi Beban Ingatan)
+✅ 8. Reduce Short-Term Memory Load (Kurangi Beban Ingatan)
 
 👉 Jangan paksa user mengingat terlalu banyak.
 
