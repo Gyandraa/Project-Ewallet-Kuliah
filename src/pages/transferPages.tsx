@@ -56,6 +56,12 @@ export default function TransferPages() {
       newErrors.bank = "Pilih bank tujuan";
     }
 
+    if (saldo === 0 || saldo < getRawNumber(nominal)) {
+      newErrors.nominal = `⚠️ Saldo anda tidak cukup, saldo anda saat ini Rp ${formatRupiah(
+        saldo.toString(),
+      )}, silahkan kurangi nominal transfer atau lakukan topup terlebih dahulu`;
+    }
+
     if (!nominal) {
       newErrors.nominal = "Nominal wajib diisi";
     } else if (getRawNumber(nominal) < 10000) {
@@ -103,7 +109,7 @@ export default function TransferPages() {
     getRawRekening(rekeningId).length >= 10 &&
     bank &&
     getRawNumber(nominal) >= 10000 &&
-    getRawNumber(nominal) <= saldo;
+    getRawNumber(nominal) >= saldo;
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6">
@@ -113,7 +119,7 @@ export default function TransferPages() {
             Transfer Uang
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            Kirim saldo dengan cepat dan mudah yang pasti hanya disini😉👌
+            Kirim saldo dengan cepat dan mudah yang pasti hanya disini
           </p>
         </div>
 
@@ -204,7 +210,7 @@ export default function TransferPages() {
               value={deskripsi}
               onChange={(e) => setDeskripsi(e.target.value)}
               className="w-full p-4 bg-gray-50 rounded-2xl"
-              placeholder="Deskripsi (opsional)"
+              placeholder="Deskripsi: contoh beli porsche"
             />
           </div>
 
@@ -227,18 +233,22 @@ export default function TransferPages() {
 
             <p>Bank: {bank.toUpperCase()}</p>
             <p>Rekening: {rekeningId}</p>
-            <p className="mb-4">Nominal: Rp {formatRupiah(nominal)}</p>
+            <p>
+              Nominal Transfer : Rp{" "}
+              <span className="text-red-600">{formatRupiah(nominal)}</span>
+            </p>
+            <p className="mb-5">Deskripsi: {deskripsi}</p>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setShowButtonConfirm(false)}
-                className="flex-1 py-2 bg-gray-200 rounded-xl"
+                className="flex-1 py-2 bg-gray-200 rounded-xl hover:bg-gray-300 transition"
               >
                 Batal
               </button>
               <button
                 onClick={handleConfirmTransfer}
-                className="flex-1 py-2 bg-blue-600 text-white rounded-xl"
+                className="flex-1 py-2 bg-blue-600 text-white hover:bg-blue-800 transition rounded-xl"
               >
                 Ya, Kirim
               </button>
