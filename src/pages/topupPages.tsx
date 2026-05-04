@@ -32,7 +32,7 @@ export default function TopupPages() {
 
     if (!nominal) {
       newErrors.nominal = "Nominal wajib diisi";
-    } else if (getRawNumber(nominal) < 5000) {
+    } else if (getRawNumber(nominal) < 10000) {
       newErrors.nominal = "Minimal topup 5000";
     } else if (getRawNumber(nominal) > 5000000) {
       newErrors.nominal = "Maksimal topup 5.000.000";
@@ -61,7 +61,7 @@ export default function TopupPages() {
   };
 
   const isFormValid =
-    getRawNumber(nominal) >= 5000 && getRawNumber(nominal) <= 5000000;
+    getRawNumber(nominal) >= 10000 && getRawNumber(nominal) <= 5000000;
 
   return (
     <>
@@ -88,11 +88,11 @@ export default function TopupPages() {
                 className="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-blue-500/20 focus:bg-white transition-all duration-200 outline-none placeholder:text-gray-400 shadow-sm"
                 placeholder="Rp 0"
               />
-              {nominal && getRawNumber(nominal) < 5000 && (
+              {nominal && getRawNumber(nominal) < 10000 && (
                 <div className="mt-2 flex items-center gap-1.5 text-amber-600 bg-amber-50 p-2 rounded-lg border border-amber-100">
                   <span className="text-[10px]">●</span>
                   <p className="text-[11px] font-medium">
-                    Minimal topup Rp 5.000
+                    Minimal topup Rp 10.000
                   </p>
                 </div>
               )}
