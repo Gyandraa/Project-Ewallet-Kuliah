@@ -1,75 +1,147 @@
-# React + TypeScript + Vite
+# 💰 E-Wallet App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplikasi **E-Wallet sederhana** berbasis **React + TypeScript** yang memungkinkan pengguna melakukan transaksi keuangan seperti transfer, top-up saldo, serta melihat riwayat aktivitas.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Tech Stack
 
-## React Compiler
+- ⚛️ React
+- 🟦 TypeScript
+- 🎨 CSS / Tailwind
+- 🌐 React Router
+- 🔔 React Toastify (notifikasi)
+- 💾 LocalStorage (penyimpanan data sementara)
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+---
 
-Note: This will impact Vite dev & build performances.
+## ✨ Fitur Utama
 
-## Expanding the ESLint configuration
+### 1. 💸 Transfer
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Kirim saldo ke pengguna lain
+- Input nomor rekening tujuan
+- Tambahkan deskripsi transaksi
+- Validasi saldo sebelum transfer
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 2. 💳 Top Up Saldo
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Tambah saldo ke akun
+- Input nominal top-up
+- Update saldo secara real-time
+
+---
+
+### 3. 👁️ Show / Hide Saldo
+
+- Menampilkan saldo pengguna
+- Fitur **hide saldo** untuk menjaga privasi
+- Toggle untuk show/hide saldo
+
+---
+
+### 4. 📊 Aktivitas Transaksi
+
+- Menampilkan **riwayat transaksi**
+- List transfer masuk & keluar
+- Informasi:
+  - Nominal
+  - Tanggal
+  - Deskripsi
+
+---
+
+## 📂 Struktur Folder (Contoh)
+
+```
+src/
+│── components/
+    └── Layout/
+    ├── bottomNavbar.tsx
+    ├── navbar.tsx
+
+    └── menuUtama.tsx
+│── pages/
+│   ├── Home.tsx
+│   ├── aktivitasSection.tsx
+│   ├── topupPages.tsx
+│   ├── transferPages.tsx
+│── context/
+│   └── WalletContext.tsx
+│── router/
+    └── router.tsx
+│── App.tsx
+│── main.tsx
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Cara Menjalankan Project
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clone repository
+
+```bash
+git clone https://github.com/username/ewallet-app.git
 ```
+
+2. Masuk ke folder project
+
+```bash
+cd ewallet-app
+```
+
+3. Install dependencies
+
+```bash
+npm install
+```
+
+4. Jalankan project
+
+```bash
+npm run dev
+```
+
+---
+
+## 💡 Cara Kerja Singkat
+
+- Saldo disimpan menggunakan **LocalStorage**
+- Setiap transaksi:
+  - Mengurangi atau menambah saldo
+  - Disimpan ke dalam list aktivitas
+
+- Data akan tetap ada selama browser tidak di-clear
+
+---
+
+## 🔒 Catatan
+
+- Project ini masih bersifat **frontend simulation**
+- Tidak menggunakan backend / database
+
+---
+
+## 📌 Future Improvement
+
+- 🔐 Authentication (Login/Register)
+- 🌍 Integrasi API / Backend
+- 📱 Responsive UI
+- 📈 Grafik pengeluaran
+- 💵 Multi akun
+
+---
+
+## 👨‍💻 Author
+
+Dibuat oleh: **[Gyandra Naufal]**
+
+---
+
+## ⭐ Penutup
+
+Project ini dibuat untuk memenuhi tugas desain yang diberikan oleh dosen saya, dan sekaligus meningkatkan skill saya
+
+---
