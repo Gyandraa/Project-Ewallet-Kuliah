@@ -5,7 +5,7 @@ import TransferPages from "../pages/transferPages";
 import TopupPages from "../pages/topupPages";
 import ScanQrPages from "../pages/scanQrPages";
 import InvestasiPages from "../pages/investasiPages";
-import AktivitasSection from "../pages/aktivitasSection";
+import AktivitasSection from "../pages/activitySection";
 import PaketData from "../pages/paketData";
 export default function Router() {
   return (
