@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 export default function TopupPages() {
   const [nominal, setNominal] = useState("");
   const [errors, setErrors] = useState<any>({});
+  const [showButtonConfirm, setShowButtonConfirm] = useState(false);
 
   const { topup } = useWallet();
 
@@ -33,7 +34,7 @@ export default function TopupPages() {
     if (!nominal) {
       newErrors.nominal = "Nominal wajib diisi";
     } else if (getRawNumber(nominal) < 10000) {
-      newErrors.nominal = "Minimal topup 5000";
+      newErrors.nominal = "Minimal topup 10000";
     } else if (getRawNumber(nominal) > 5000000) {
       newErrors.nominal = "Maksimal topup 5.000.000";
     }
@@ -42,6 +43,11 @@ export default function TopupPages() {
   };
 
   const handleTopup = () => {
+    if (!validate()) return;
+    setShowButtonConfirm(true);
+  };
+
+  const handleConfirmTopup = () => {
     if (!validate()) return;
 
     const result = topup(getRawNumber(nominal));
@@ -54,6 +60,7 @@ export default function TopupPages() {
     notifySuccess();
 
     setNominal("");
+    setShowButtonConfirm(false);
 
     setTimeout(() => {
       navigate("/");
@@ -125,6 +132,33 @@ export default function TopupPages() {
           </div>
         </div>
       </div>
+
+      {showButtonConfirm && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-3xl p-8 w-full max-w-sm text-center">
+            <h2 className="text-xl font-bold mb-4">Konfirmasi Topup</h2>
+            <p className="text-gray-700 mb-6">
+              Apakah anda yakin ingin melakukan topup sebesar
+              <span className="font-semibold">Rp {formatRupiah(nominal)}</span>?
+            </p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => setShowButtonConfirm(false)}
+                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-300 transition-colors duration-200"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmTopup}
+                className="px-6 py-3 bg-green-500 text-white rounded-2xl font-bold hover:bg-green-700 transition-colors duration-200"
+              >
+                Ya, Topup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <ToastContainer
         position="bottom-right"
         autoClose={2500}
