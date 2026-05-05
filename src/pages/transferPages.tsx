@@ -109,7 +109,7 @@ export default function TransferPages() {
     getRawRekening(rekeningId).length >= 10 &&
     bank &&
     getRawNumber(nominal) >= 10000 &&
-    getRawNumber(nominal) >= saldo;
+    getRawNumber(nominal) <= saldo;
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-6">
